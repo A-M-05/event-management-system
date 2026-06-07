@@ -5,7 +5,7 @@ def create_tables():
     """Executes all the DDL statements to initialize the schema"""
     conn = get_connection()
     cursor = conn.cursor()
-
+    
     try:
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS User (
@@ -142,81 +142,97 @@ def import_data(data_directory: str) -> bool:
     """
     conn = get_connection()
     cursor = conn.cursor()
+    
     try:
+        # Drop existing tables
+        cursor.execute("DROP TABLE IF EXISTS Approval")
+        cursor.execute("DROP TABLE IF EXISTS Hosting")
+        cursor.execute("DROP TABLE IF EXISTS Slot")
+        cursor.execute("DROP TABLE IF EXISTS OffCampus")
+        cursor.execute("DROP TABLE IF EXISTS OnCampus")
+        cursor.execute("DROP TABLE IF EXISTS Venue")
+        cursor.execute("DROP TABLE IF EXISTS Event")
+        cursor.execute("DROP TABLE IF EXISTS Administrator")
+        cursor.execute("DROP TABLE IF EXISTS Participant")
+        cursor.execute("DROP TABLE IF EXISTS Organizer")
+        cursor.execute("DROP TABLE IF EXISTS User")
+
+        create_tables()
+        
         # User (uid, email, username, joined)
         for row in load_csv(f"{data_directory}/User.csv", ["uid", "email", "username", "joined"]):
             cursor.execute(
-                "INSERT IGNORE INTO User (uid, email, username, joined) VALUES (%s, %s, %s, %s)",
+                "INSERT INTO User (uid, email, username, joined) VALUES (%s, %s, %s, %s)",
                 (row["uid"], row["email"], row["username"], row["joined"])
             )
 
         # Organizer (uid, department, experience)
         for row in load_csv(f"{data_directory}/Organizer.csv", ["uid", "department", "experience"]):
             cursor.execute(
-                "INSERT IGNORE INTO Organizer (uid, department, experience) VALUES (%s, %s, %s)",
+                "INSERT INTO Organizer (uid, department, experience) VALUES (%s, %s, %s)",
                 (row["uid"], row["department"], row["experience"])
             )
 
         # Participant (uid, type)
         for row in load_csv(f"{data_directory}/Participant.csv", ["uid", "type"]):
             cursor.execute(
-                "INSERT IGNORE INTO Participant (uid, type) VALUES (%s, %s)",
+                "INSERT INTO Participant (uid, type) VALUES (%s, %s)",
                 (row["uid"], row["type"])
             )
 
         # Administrator (uid, firstname, lastname)
         for row in load_csv(f"{data_directory}/Administrator.csv", ["uid", "firstname", "lastname"]):
             cursor.execute(
-                "INSERT IGNORE INTO Administrator (uid, firstname, lastname) VALUES (%s, %s, %s)",
+                "INSERT INTO Administrator (uid, firstname, lastname) VALUES (%s, %s, %s)",
                 (row["uid"], row["firstname"], row["lastname"])
             )
 
         # Event (eid, creator_uid, title, type, datetime)
         for row in load_csv(f"{data_directory}/Event.csv", ["eid", "creator_uid", "title", "type", "datetime"]):
             cursor.execute(
-                "INSERT IGNORE INTO Event (eid, creator_uid, title, type, datetime) VALUES (%s, %s, %s, %s, %s)",
+                "INSERT INTO Event (eid, creator_uid, title, type, datetime) VALUES (%s, %s, %s, %s, %s)",
                 (row["eid"], row["creator_uid"], row["title"], row["type"], row["datetime"])
             )
 
         # Venue (vid, street, city, state, zip)
         for row in load_csv(f"{data_directory}/Venue.csv", ["vid", "street", "city", "state", "zip"]):
             cursor.execute(
-                "INSERT IGNORE INTO Venue (vid, street, city, state, zip) VALUES (%s, %s, %s, %s, %s)",
+                "INSERT INTO Venue (vid, street, city, state, zip) VALUES (%s, %s, %s, %s, %s)",
                 (row["vid"], row["street"], row["city"], row["state"], row["zip"])
             )
 
         # OnCampus (vid, code)
         for row in load_csv(f"{data_directory}/OnCampus.csv", ["vid", "code"]):
             cursor.execute(
-                "INSERT IGNORE INTO OnCampus (vid, code) VALUES (%s, %s)",
+                "INSERT INTO OnCampus (vid, code) VALUES (%s, %s)",
                 (row["vid"], row["code"])
             )
 
         # OffCampus (vid, distance)
         for row in load_csv(f"{data_directory}/OffCampus.csv", ["vid", "distance"]):
             cursor.execute(
-                "INSERT IGNORE INTO OffCampus (vid, distance) VALUES (%s, %s)",
+                "INSERT INTO OffCampus (vid, distance) VALUES (%s, %s)",
                 (row["vid"], row["distance"])
             )
 
         # Slot (eid, snum, is_reserved)
         for row in load_csv(f"{data_directory}/Slot.csv", ["eid", "snum", "is_reserved", "uid"]):
             cursor.execute(
-                "INSERT IGNORE INTO Slot (eid, snum, is_reserved, uid) VALUES (%s, %s, %s, %s)",
+                "INSERT INTO Slot (eid, snum, is_reserved, uid) VALUES (%s, %s, %s, %s)",
                 (row["eid"], row["snum"], row["is_reserved"], row.get("uid") or None)
             )
 
         # Hosting (eid, vid, is_primary)
         for row in load_csv(f"{data_directory}/Hosting.csv", ["eid", "vid", "is_primary"]):
             cursor.execute(
-                "INSERT IGNORE INTO Hosting (eid, vid, is_primary) VALUES (%s, %s, %s)",
+                "INSERT INTO Hosting (eid, vid, is_primary) VALUES (%s, %s, %s)",
                 (row["eid"], row["vid"], row["is_primary"])
             )
 
         # Approval (vid, uid, valid_from, valid_until)
         for row in load_csv(f"{data_directory}/Approval.csv", ["uid", "vid", "valid_from", "valid_until"]):
             cursor.execute(
-                "INSERT IGNORE INTO Approval (uid, vid, valid_from, valid_until) VALUES (%s, %s, %s, %s)",
+                "INSERT INTO Approval (uid, vid, valid_from, valid_until) VALUES (%s, %s, %s, %s)",
                 (row["uid"], row["vid"], row["valid_from"], row["valid_until"])
             )
 
