@@ -7,12 +7,11 @@ def main():
     # The command format is:
     # python project.py functionName param1 param2 ...
 
-    create_tables()
     
     function_name = sys.argv[1]
     args = sys.argv[2:]
 
-    if function == "import":
+    if function_name == "import":
         import_data(args[0])
     
     elif function_name == "addVenue":
