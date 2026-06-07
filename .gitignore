@@ -7,3 +7,5 @@ venv/
 .vscode/
 .idea/
 *.log
+setup.sql
+test_queries.py

@@ -1,21 +1,29 @@
 import sys
+
+from ops_reserve import add_venue, reserve_slot, cancel_reservation
 from schema import create_tables, import_data
 
 def main():
+    # The command format is:
+    # python project.py functionName param1 param2 ...
 
     create_tables()
-
-    function = sys.argv[1]
+    
+    function_name = sys.argv[1]
     args = sys.argv[2:]
 
     if function == "import":
-        result = import_data(args[0])
-
-    else:
-        print(f"Unkown function: {function}")
-        sys.exit(1)
+        import_data(args[0])
     
-    print(result) # This will print True on success and False on fail
+    elif function_name == "addVenue":
+        add_venue(args)
+
+    elif function_name == "reserveSlot":
+        reserve_slot(args)
+
+    elif function_name == "cancelReservation":
+        cancel_reservation(args)
+
 
 if __name__ == "__main__":
     main()

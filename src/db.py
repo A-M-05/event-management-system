@@ -1,11 +1,9 @@
 import mysql.connector
 
+
 def get_connection():
-    conn = mysql.connector.connect(
-        host="localhost",
+    return mysql.connector.connect(
         user="test",
         password="password",
-        database="zotevent"
+        database="cs122a"
     )
-
-    return conn
