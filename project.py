@@ -9,7 +9,7 @@ from ops_query import (
     organizer_stats,
     venue_events,
 )
-from schema import create_tables, import_data
+from schema import import_data
 
 
 def main():
