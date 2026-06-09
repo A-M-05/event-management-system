@@ -1,5 +1,6 @@
 import sys
 
+from ops_insert import insert_admin, update_event, delete_organizer
 from ops_reserve import add_venue, reserve_slot, cancel_reservation
 from ops_query import (
     available_events,
@@ -21,6 +22,9 @@ def main():
     if function_name == "import":
         import_data(args[0])
 
+    elif function_name == "insertAdmin":
+        insert_admin(args)
+
     elif function_name == "addVenue":
         add_venue(args)
 
@@ -29,6 +33,12 @@ def main():
 
     elif function_name == "cancelReservation":
         cancel_reservation(args)
+
+    elif function_name == "updateEvent":
+        update_event(args)
+
+    elif function_name == "deleteOrganizer":
+        delete_organizer(args)
 
     elif function_name == "availableEvents":
         available_events(args[0])

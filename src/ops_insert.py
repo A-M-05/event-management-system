@@ -1,11 +1,21 @@
 from db import get_connection
 
-def insertAdmin(uid, email, username, joined, firstname, lastname):
+def insert_admin(args):
+    # args: uid, email, username, joined, firstname, lastname
     conn = get_connection()
     cursor = conn.cursor()
     try:
+        uid = int(args[0])
+        email = args[1]
+        username = args[2]
+        joined = args[3]
+        firstname = args[4]
+        lastname = args[5]
+
+        # User may already exist (covering + overlapping ISA), so use INSERT IGNORE.
+        # This skips the User insert if the uid already exists.
         cursor.execute(
-            "INSERT INTO User (uid, email, username, joined) VALUES (%s, %s, %s, %s)",
+            "INSERT IGNORE INTO User (uid, email, username, joined) VALUES (%s, %s, %s, %s)",
             (uid, email, username, joined)
         )
         cursor.execute(
@@ -13,49 +23,58 @@ def insertAdmin(uid, email, username, joined, firstname, lastname):
             (uid, firstname, lastname)
         )
         conn.commit()
-        return True
+        print("Success")
     except Exception as e:
         conn.rollback()
-        print(f"insertAdmin failed: {e}")
-        return False
+        print("Fail")
     finally:
         cursor.close()
         conn.close()
 
-def updateEvent(eid, title=None, type=None, datetime=None):
+def update_event(args):
+    # args: eid, title, datetime
     conn = get_connection()
     cursor = conn.cursor()
     try:
+        eid = int(args[0])
+        title = args[1]
+        datetime = args[2]
+
         cursor.execute("SELECT * FROM Event WHERE eid = %s", (eid,))
         if cursor.fetchone() is None:
-            return False
+            print("Fail")
+            return
         cursor.execute(
-            "UPDATE Event SET title=%s, type=%s, datetime=%s WHERE eid=%s",
-            (title, type, datetime, eid)
+            "UPDATE Event SET title=%s, datetime=%s WHERE eid=%s",
+            (title, datetime, eid)
         )
         conn.commit()
-        return True
+        print("Success")
     except Exception as e:
         conn.rollback()
-        print(f"updateEvent failed: {e}")
-        return False
+        print("Fail")
     finally:
         cursor.close()
         conn.close()
 
-def deleteOrganizer(uid):
+def delete_organizer(args):
+    # args: uid
     conn = get_connection()
     cursor = conn.cursor()
     try:
+        uid = int(args[0])
+
         cursor.execute("SELECT * FROM Organizer WHERE uid = %s", (uid,))
         if cursor.fetchone() is None:
-            return False
+            print("Fail")
+            return
+        # ON DELETE CASCADE handles Events, Slots, and Hosting automatically
         cursor.execute("DELETE FROM Organizer WHERE uid = %s", (uid,))
         conn.commit()
-        return True
-    except:
+        print("Success")
+    except Exception:
         conn.rollback()
-        return False
+        print("Fail")
     finally:
         cursor.close()
         conn.close()
