@@ -20,7 +20,10 @@ def main():
     args = sys.argv[2:]
 
     if function_name == "import":
-        import_data(args[0])
+        if import_data(args[0]):
+            print("Success")
+        else:
+            print("Fail")
 
     elif function_name == "insertAdmin":
         insert_admin(args)

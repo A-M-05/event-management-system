@@ -70,12 +70,12 @@ def participant_schedule(uid):
     try:
         cursor.execute(
                     """
-                    SELECT E.eid, E.title, E.type, E.datetime, S.snum, V.vid, V.street, V.city, V.state, V.zip
+                    SELECT DISTINCT E.eid, E.title, E.type, E.datetime, S.snum, V.vid, V.street, V.city, V.state, V.zip
                     FROM Event E
                     INNER JOIN Slot S ON S.eid = E.eid AND S.uid = %s
                     LEFT JOIN Hosting H ON E.eid = H.eid AND H.is_primary = TRUE
                     LEFT JOIN Venue V on H.vid = V.vid
-                    ORDER BY E.datetime ASC
+                    ORDER BY E.datetime ASC, E.eid ASC
                     """, (uid, ))
         _print_rows(cursor)
     finally:

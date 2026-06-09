@@ -247,9 +247,8 @@ def import_data(data_directory: str) -> bool:
         conn.commit()
         return True
 
-    except Exception as e:
+    except Exception:
         conn.rollback()
-        print(f"Import failed: {e}")
         return False
 
     finally:
