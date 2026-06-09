@@ -13,6 +13,9 @@ def _format(value):
     """
     if value is None:
         return ""
+    if isinstance(value, datetime.datetime):
+        return value.strftime("%Y-%m-%d %H:%M:%S")
+    
     return str(value)
 
 
