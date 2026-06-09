@@ -6,6 +6,8 @@ venv/
 .DS_Store
 .vscode/
 .idea/
+test-data/
 *.log
 setup.sql
 test_queries.py
+run_tests.py

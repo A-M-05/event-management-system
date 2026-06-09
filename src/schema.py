@@ -1,6 +1,14 @@
 import csv
 from db import get_connection
 
+def _clean(value):
+    """Convert literal CSV strings like 'NULL', '', 'None' into Python None."""
+    if value is None:
+        return None
+    if isinstance(value, str) and value.strip().upper() in ("NULL", "", "NONE"):
+        return None
+    return value
+
 def create_tables():
     """Executes all the DDL statements to initialize the schema"""
     conn = get_connection()
@@ -163,77 +171,77 @@ def import_data(data_directory: str) -> bool:
         for row in load_csv(f"{data_directory}/User.csv", ["uid", "email", "username", "joined"]):
             cursor.execute(
                 "INSERT INTO User (uid, email, username, joined) VALUES (%s, %s, %s, %s)",
-                (row["uid"], row["email"], row["username"], row["joined"])
+                (_clean(row["uid"]), _clean(row["email"]), _clean(row["username"]), _clean(row["joined"]))
             )
 
         # Organizer (uid, department, experience)
         for row in load_csv(f"{data_directory}/Organizer.csv", ["uid", "department", "experience"]):
             cursor.execute(
                 "INSERT INTO Organizer (uid, department, experience) VALUES (%s, %s, %s)",
-                (row["uid"], row["department"], row["experience"])
+                (_clean(row["uid"]), _clean(row["department"]), _clean(row["experience"]))
             )
 
         # Participant (uid, type)
         for row in load_csv(f"{data_directory}/Participant.csv", ["uid", "type"]):
             cursor.execute(
                 "INSERT INTO Participant (uid, type) VALUES (%s, %s)",
-                (row["uid"], row["type"])
+                (_clean(row["uid"]), _clean(row["type"]))
             )
 
         # Administrator (uid, firstname, lastname)
         for row in load_csv(f"{data_directory}/Administrator.csv", ["uid", "firstname", "lastname"]):
             cursor.execute(
                 "INSERT INTO Administrator (uid, firstname, lastname) VALUES (%s, %s, %s)",
-                (row["uid"], row["firstname"], row["lastname"])
+                (_clean(row["uid"]), _clean(row["firstname"]), _clean(row["lastname"]))
             )
 
         # Event (eid, creator_uid, title, type, datetime)
         for row in load_csv(f"{data_directory}/Event.csv", ["eid", "creator_uid", "title", "type", "datetime"]):
             cursor.execute(
                 "INSERT INTO Event (eid, creator_uid, title, type, datetime) VALUES (%s, %s, %s, %s, %s)",
-                (row["eid"], row["creator_uid"], row["title"], row["type"], row["datetime"])
+                (_clean(row["eid"]), _clean(row["creator_uid"]), _clean(row["title"]), _clean(row["type"]), _clean(row["datetime"]))
             )
 
         # Venue (vid, street, city, state, zip)
         for row in load_csv(f"{data_directory}/Venue.csv", ["vid", "street", "city", "state", "zip"]):
             cursor.execute(
                 "INSERT INTO Venue (vid, street, city, state, zip) VALUES (%s, %s, %s, %s, %s)",
-                (row["vid"], row["street"], row["city"], row["state"], row["zip"])
+                (_clean(row["vid"]), _clean(row["street"]), _clean(row["city"]), _clean(row["state"]), _clean(row["zip"]))
             )
 
         # OnCampus (vid, code)
         for row in load_csv(f"{data_directory}/OnCampus.csv", ["vid", "code"]):
             cursor.execute(
                 "INSERT INTO OnCampus (vid, code) VALUES (%s, %s)",
-                (row["vid"], row["code"])
+                (_clean(row["vid"]), _clean(row["code"]))
             )
 
         # OffCampus (vid, distance)
         for row in load_csv(f"{data_directory}/OffCampus.csv", ["vid", "distance"]):
             cursor.execute(
                 "INSERT INTO OffCampus (vid, distance) VALUES (%s, %s)",
-                (row["vid"], row["distance"])
+                (_clean(row["vid"]), _clean(row["distance"]))
             )
 
         # Slot (eid, snum, is_reserved)
         for row in load_csv(f"{data_directory}/Slot.csv", ["eid", "snum", "is_reserved", "uid"]):
             cursor.execute(
                 "INSERT INTO Slot (eid, snum, is_reserved, uid) VALUES (%s, %s, %s, %s)",
-                (row["eid"], row["snum"], row["is_reserved"], row.get("uid") or None)
+                (_clean(row["eid"]), _clean(row["snum"]), _clean(row["is_reserved"]), _clean(row["uid"]))
             )
 
         # Hosting (eid, vid, is_primary)
         for row in load_csv(f"{data_directory}/Hosting.csv", ["eid", "vid", "is_primary"]):
             cursor.execute(
                 "INSERT INTO Hosting (eid, vid, is_primary) VALUES (%s, %s, %s)",
-                (row["eid"], row["vid"], row["is_primary"])
+                (_clean(row["eid"]), _clean(row["vid"]), _clean(row["is_primary"]))
             )
 
         # Approval (vid, uid, valid_from, valid_until)
         for row in load_csv(f"{data_directory}/Approval.csv", ["uid", "vid", "valid_from", "valid_until"]):
             cursor.execute(
                 "INSERT INTO Approval (uid, vid, valid_from, valid_until) VALUES (%s, %s, %s, %s)",
-                (row["uid"], row["vid"], row["valid_from"], row["valid_until"])
+                (_clean(row["uid"]), _clean(row["vid"]), _clean(row["valid_from"]), _clean(row["valid_until"]))
             )
 
         conn.commit()
