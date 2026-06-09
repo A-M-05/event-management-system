@@ -33,12 +33,11 @@ def available_events(date):
     try:
         cursor.execute(
                     """
-                    SELECT E.eid, E.title, E.type, E.datetime, S.snum, V.vid, V.street, V.city, V.state, V.zip
-                    FROM Slot S
-                    JOIN Event E ON S.eid = E.eid
-                    LEFT JOIN Hosting H ON E.eid = H.eid AND H.is_primary = TRUE
-                    LEFT JOIN Venue V ON H.vid = V.vid
-                    WHERE S.uid = %s
+                    SELECT E.eid, E.title, E.type, E.datetime, COUNT(S.snum) AS availableSlots
+                    FROM Event E
+                    INNER JOIN Slot S ON S.eid = E.eid
+                    WHERE E.datetime > %s AND S.is_reserved = FALSE
+                    GROUP BY E.eid, E.title, E.type, E.datetime
                     ORDER BY E.datetime ASC, E.eid ASC
                     """, (date, ))
         _print_rows(cursor)
