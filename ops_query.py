@@ -4,6 +4,7 @@ Each function executes a SELECT query and prints results in CSV format
 (one record per line, comma-separated columns).
 """
 from db import get_connection
+import datetime
 
 
 def _format(value):
